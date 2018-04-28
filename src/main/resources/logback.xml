@@ -1,0 +1,1 @@
+<logger name="org.apachse.kafka" level="OFF"/><!-- 关闭控制台debug日志  ->
