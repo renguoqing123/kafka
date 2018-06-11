@@ -4,37 +4,27 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Properties;
-
+import java.util.concurrent.ConcurrentHashMap;
 
 public class KafkaConsumerMessage {
     private KafkaConsumer<Integer, String> consumer;
     public final static String TOPIC = "t_cdr";
     
-    KafkaConsumerMessage(){
+    KafkaConsumerMessage() throws IOException{
         Properties props = new Properties();
-        props.put("bootstrap.servers", "192.168.84.137:9092");  // 该地址是集群的子集，用来探测集群。多个以逗号隔开
-        //props.put("zookeeper.connect", "192.168.84.137:2181");
-        props.put("group.id", "test-consumer-group");// cousumer的分组id  对应配置文件config/consumer.properties
-        //props.put("zookeeper.session.timeout.ms", "400");
-        //props.put("zookeeper.sync.time.ms", "200");
-        props.put("enable.auto.commit", "true");// 自动提交offsets
-        props.put("auto.commit.interval.ms", "1000");// 每隔1s，自动提交offsets
-        props.put("session.timeout.ms", "30000");  // Consumer向集群发送自己的心跳，超时则认为Consumer已经死了，kafka会把它的分区分配给其他进程
-        props.put("key.deserializer", "org.apache.kafka.common.serialization.IntegerDeserializer"); // 反序列化器 
-        props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.put("org.apache.kafka.clients.consumer","off");
-//        consumer=Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
+        InputStream in =KafkaProducer.class.getClass().getResourceAsStream("/kafkaConsumer.Properties");
+        props.load(in);
         consumer = new KafkaConsumer<Integer, String>(props);
         consumer.subscribe(Collections.singletonList(TOPIC));//Arrays.asList("foo", "bar") 多个topic情况下通过集合处理
     }
     
     void consumer(){
-//        Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
-//        topicCountMap.put(TOPIC, 12);
-//        consumer.createMessageStreams(topicCountMap);
-//        consumer.commitOffsets();
+        Map<String, Object> topicMap = new ConcurrentHashMap<String, Object>();
         try {
             while (true) {
                 /* 读取数据，读取超时时间为100ms */
@@ -42,6 +32,15 @@ public class KafkaConsumerMessage {
                 for (ConsumerRecord<Integer, String> record : records) {
                     System.out.printf("topic = %s,offset = %d, key = %s, value = %s", record.topic(),record.offset(), record.key(), record.value());
                     System.out.println();
+                    topicMap.put("topic",record.topic());
+                    topicMap.put("offset",record.offset());
+                    topicMap.put("key",record.key());
+                    topicMap.put("value",record.value());
+                }
+                if(topicMap.size()>0){
+                    System.out.printf("topicMap=%s",topicMap);
+                    System.out.println("将数据以接口的形式推送出去");
+                    topicMap.clear();
                 }
             }
         }finally {
@@ -49,7 +48,7 @@ public class KafkaConsumerMessage {
         }
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new KafkaConsumerMessage().consumer();
     }
 }
