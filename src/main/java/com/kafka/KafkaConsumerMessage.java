@@ -6,9 +6,13 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class KafkaConsumerMessage {
@@ -20,7 +24,10 @@ public class KafkaConsumerMessage {
         InputStream in =KafkaProducer.class.getClass().getResourceAsStream("/kafkaConsumer.Properties");
         props.load(in);
         consumer = new KafkaConsumer<Integer, String>(props);
-        consumer.subscribe(Collections.singletonList(TOPIC));//Arrays.asList("foo", "bar") 多个topic情况下通过集合处理
+        ResourceBundle resource = ResourceBundle.getBundle("kafkaTopic");
+        String topicName=resource.getString("topicName");
+        String[] topicNames=topicName.split(",");
+        consumer.subscribe(Arrays.asList(topicNames));//Arrays.asList("foo", "bar") 多个topic情况下通过集合处理 Collections.singletonList(topicName)
     }
     
     void consumer(){
