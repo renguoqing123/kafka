@@ -10,10 +10,11 @@ import java.util.Properties;
 import java.util.Scanner;
 
 public class KafkaProducer {
-    private final Producer<String,String> producer;
-    public final static String TOPIC = "t_cdr";
+    public Producer<String,String> producer;
+    public String TOPIC = "t_cdr";
+    String key="1000";
     
-    private KafkaProducer() throws IOException{
+    public KafkaProducer() throws IOException{
         Properties props = new Properties();
 //        ResourceBundle resource = ResourceBundle.getBundle("kafka");
         InputStream in =KafkaProducer.class.getClass().getResourceAsStream("/kafkaProducer.Properties");
@@ -21,14 +22,21 @@ public class KafkaProducer {
         producer = new Producer<String, String>(new ProducerConfig(props));
     }
     
+    public KafkaProducer(String key,String topic,String msg) throws IOException{
+        this();
+        this.key=key;
+        this.TOPIC=topic;
+        produce(msg);
+    }
+    
     void produce(String data) {
-        String key="1000";
 //            String data = "hello kafka message OK";
         KeyedMessage<String, String> s = new KeyedMessage<String,String>(TOPIC, key, data);
         producer.send(s);
         producer.close();
     }
     public static void main(String[] args) throws IOException {
+        new KafkaProducer("10","t_cdr","welcome to kafka!");
         while (true) {
             Scanner sc=new Scanner(System.in);
             String data=sc.nextLine();
