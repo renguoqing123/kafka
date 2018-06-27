@@ -31,8 +31,8 @@ public class KafkaConsumerMessage {
         Map<String, Object> topicMap = new ConcurrentHashMap<String, Object>();
         try {
             while (true) {
-                /* 读取数据，读取超时时间为100ms */
-                ConsumerRecords<Integer, String> records = consumer.poll(100);
+                /* 读取数据，读取超时时间为1000ms */
+                ConsumerRecords<Integer, String> records = consumer.poll(1000);
                 for (ConsumerRecord<Integer, String> record : records) {
                     System.out.printf("topic = %s,offset = %d, key = %s, value = %s", record.topic(),record.offset(), record.key(), record.value());
                     System.out.println();
