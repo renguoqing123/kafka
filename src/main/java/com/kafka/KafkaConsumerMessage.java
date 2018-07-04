@@ -14,6 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class KafkaConsumerMessage {
     private KafkaConsumer<Integer, String> consumer;
+    private static Map<String, Object> topicMap = new ConcurrentHashMap<String, Object>();
     public final static String             TOPIC = "t_cdr";
 
     KafkaConsumerMessage() throws IOException {
@@ -28,7 +29,6 @@ public class KafkaConsumerMessage {
     }
 
     void consumer() {
-        Map<String, Object> topicMap = new ConcurrentHashMap<String, Object>();
         try {
             while (true) {
                 /* 读取数据，读取超时时间为1000ms */
