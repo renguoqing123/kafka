@@ -48,6 +48,8 @@ public class KafkaConsumerMessage {
                     topicMap.clear();
                 }
             }
+        }catch (Exception e) {
+            System.out.printf("e=%s",e);
         } finally {
             consumer.close();
         }
