@@ -43,9 +43,11 @@ public class KafkaConsumerMessage {
                     topicMap.put("value", record.value());
                 }
                 if (topicMap.size() > 0) {
-                    System.out.printf("topicMap=%s", topicMap);
-                    System.out.println("将数据以接口的形式推送出去");
-                    topicMap.clear();
+                    synchronized (topicMap) {
+                        System.out.printf("topicMap=%s", topicMap);
+                        System.out.println("将数据以接口的形式推送出去");
+                        topicMap.clear();
+                    }
                 }
             }
         } catch (Exception e) {
