@@ -2,6 +2,10 @@ package com.kafka;
 
 import scala.actors.threadpool.Arrays;
 
+/**
+ * 类BubbleSort.java的实现描述：冒泡排序改进版 
+ * @author rengq 2018年8月24日 上午9:35:50
+ */
 public class BubbleSort {
     public static void sort(int array[]) {
         int temp=0;
@@ -36,7 +40,7 @@ public class BubbleSort {
         }
     }
     public static void main(String[] args) {
-        int[] s= {8,3,4,2,7,1,5,6};
+        int[] s= {8,3,4,2,7,1,6,5};
         sort(s);
         System.out.println(Arrays.toString(s));
     }
